@@ -6,16 +6,17 @@ const search = document.querySelector(".search input");
 const generateTemplate = (todo, dateTime) => {
   const time = new Date(dateTime).toLocaleString("tr-TR");
   const html = `
-     <li class="list-group-item d-flex justify-content-between align-items-center flex-column align-items-start">
+    <li class="list-group-item d-flex justify-content-between align-items-center flex-column align-items-start">
       <div class="d-flex w-100 justify-content-between">
-        <span>${todo}</span>
-        <i class="fa-solid fa-eraser delete"></i>
+        <span class="todo-text">${todo}</span>
+        <div>
+          <i class="fa-solid fa-pen-to-square edit mr-2" style="cursor:pointer"></i>
+          <i class="fa-solid fa-eraser delete" style="cursor:pointer"></i>
+        </div>
       </div>
-      <small class="text-black mt-2">Tarih: ${time}</small>
-      </div>
+      <small class="text-light mt-2 todo-time">Tarih: ${time}</small>
     </li>
-    `;
-  //!Her yeni eklenen eleman için listeyi html yapısına ekleme.
+  `;
   listTodo.innerHTML += html;
 };
 
@@ -30,10 +31,32 @@ addForm.addEventListener("submit", (e) => {
     addForm.reset();
   }
 });
+
 //!Silme işlemi:
 listTodo.addEventListener("click", (e) => {
   if (e.target.classList.contains("delete")) {
-    e.target.parentElement.remove();
+    e.target.closest("li").remove();
+  }
+
+  //!Görev güncelleme:
+  if (e.target.classList.contains("edit")) {
+    const listItem = e.target.closest("li");
+    const textEl = listItem.querySelector(".todo-text");
+    const timeEl = listItem.querySelector(".todo-time");
+
+    if (!textEl || !timeEl) {
+      return;
+    }
+    const currentText = textEl.textContent;
+    const currentTime = timeEl.textContent.replace("Tarih: ", "");
+
+    const updateText = prompt("Yeni görev:", currentText);
+    const updateTime = prompt("Yeni tarih:", currentTime);
+
+    if (updateText && updateTime) {
+      textEl.textContent = updateText;
+      timeEl.textContent = updateTime;
+    }
   }
 });
 
